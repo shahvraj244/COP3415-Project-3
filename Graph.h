@@ -1,10 +1,10 @@
 #ifndef GRAPH_H
 #define GRAPH_H
-
 #include <vector>
 #include <string>
 #include "Vertex.h"
 #include "Edge.h"
+using namespace std;
 
 template <typename T>
 class Graph {
@@ -12,11 +12,11 @@ class Graph {
         Graph() {}
         //insert vertex and edge with weights of distance and cost 
         void insert_vertex(const Vertex<T>& ver); 
-        void add_edge(const Vertex<T>& src, const Vertex& ver2, int distance, int cost); 
+        void add_edge(const Vertex<T>& ver1, const Vertex<T>& ver2, int weight);
         //Dijkstra Shortest Path returns weight
-        int short_path(const Vertex<T>& src, const Vertex<T>& dest);
+        int dijkstra_shortest_path(const Vertex<T>& src, const Vertex<T>& dest);
         //shortest path to airports in some state that hops to diff airports 
-        void short_paths_state(const Vertex<T>& src, const std::string& state);
+        void short_paths_state(const Vertex<T>& src, const string& state);
         //short path with stops 
         void short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int stops);
         //Disp connections 
@@ -34,7 +34,7 @@ class Graph {
     
     private:
         vector<Vertex<T>> vertices;
-        vector<std::vector<Edge>> edges;
+        vector<vector<Edge>> edges;
         void clean_visited();
         void DFS_helper(Vertex<T>& ver);
         int get_vertex_index(const Vertex<T>& ver);
