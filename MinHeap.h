@@ -1,0 +1,33 @@
+#ifndef MINHEAP_H
+#define MINHEAP_H
+#include <vector>
+using namespace std; 
+
+template <typename T> 
+class MinHeap {
+    public:
+        MinHeap() : size(0) {}
+
+        MinHeap(vector<T> v);
+        void insert(const T& val);
+        void print() const; 
+        T delete_min(); 
+
+        bool isEmpty() const {
+            return size == 0; 
+        }
+    private:
+        vector<T> data;
+        int size; 
+
+        void swap(T& v1, T& v2) {
+            T tmp = v1;
+            v1 = v2; 
+            v2 = tmp; 
+        }
+
+        void percolate_down(int i); 
+        int min_index(int i1, int i2) const; 
+};
+
+#endif
