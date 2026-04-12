@@ -31,7 +31,8 @@ class Graph {
         void BFS(Vertex<T>& ver); 
         //Depth first search 
         void DFS(Vertex<T>& ver); 
-    
+        //read from csv file 
+        Graph(const string& filename);
     private:
         vector<Vertex<T>> vertices;
         vector<vector<Edge>> edges;

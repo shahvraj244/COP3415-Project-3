@@ -124,7 +124,7 @@ void Graph<T>::clean_visited() {
 
 
 template<typename T>
-int dijkstra_shortest_path(const Vertex<T>& src, const Vertex<T>& dest) {
+int Graph<T>::dijkstra_shortest_path(const Vertex<T>& src, const Vertex<T>& dest) {
     int i_src = get_vertex_index(src);
     int i_dest = get_vertex_index(dest);
     if (i_src == -1 || i_dest == -1) {
@@ -171,6 +171,8 @@ int dijkstra_shortest_path(const Vertex<T>& src, const Vertex<T>& dest) {
 
 //Function to implement 
 /*
+        //read from csv file 
+        Graph(const string& filename);
         //Undirected Graph G_u 
         Graph<T> cost_graph; 
         //helper functions for kruskal 
@@ -185,10 +187,4 @@ int dijkstra_shortest_path(const Vertex<T>& src, const Vertex<T>& dest) {
         void prim_mst(); 
         //kruskal's minimum span tree
         void kruskal_mst(); 
-        //print function
-        void print() const; 
-        //Breadth first search
-        void BFS(Vertex<T>& ver); 
-        //Depth first search 
-        void DFS(Vertex<T>& ver); 
 */
