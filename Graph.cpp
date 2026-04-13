@@ -607,10 +607,6 @@ void Graph<T>::union_set(vector<int>& parent, int i, int j) {
     //TODO
 }
 
-template <typename T>
-void Graph<T>::kruskal_mst() {
-    //TODO
-}
 //Function to implement 
 /*
         //read from csv file 
