@@ -586,7 +586,57 @@ Return:
 */
 template <typename T>
 void Graph<T>::kruskal_mst() {
-    //TODO
+    const int n = cost_graph_data.vertices.size();
+    if(n == 0) {
+        cout << "Kruskal MST:" << endl;
+        cout << "Total cost: 0" << endl;
+        return;
+    }
+
+    vector<Edge> all_edges;
+    for(int u = 0; u < n; u++) {
+        for(int j = 0; j < cost_graph_data.edges[u].size(); j++) {
+            const Edge& edge = cost_graph_data.edges[u][j];
+            if(edge.src < edge.dest) {
+                all_edges.push_back(edge);
+            }
+        }
+    }
+
+    sort(all_edges.begin(), all_edges.end());
+
+    vector<int> parent(n);
+    for(int i = 0; i < n; i++) {
+        parent[i] = i;
+    }
+
+    vector<Edge> mst_edges;
+    mst_edges.reserve(n > 0 ? n - 1 : 0);
+    int total_cost = 0;
+
+    for(int i = 0; i < all_edges.size(); i++) {
+        const Edge& edge = all_edges[i];
+        int root_u = find_set(parent, edge.src);
+        int root_v = find_set(parent, edge.dest);
+
+        if(root_u != root_v) {
+            union_set(parent, root_u, root_v);
+            mst_edges.push_back(edge);
+            total_cost += edge.weight;
+        }
+    }
+
+    cout << "Kruskal MST:" << endl;
+    for(int i = 0; i < mst_edges.size(); i++) {
+        const Edge& edge = mst_edges[i];
+        cout << cost_graph_data.vertices[edge.src].getData()
+             << " - "
+             << cost_graph_data.vertices[edge.dest].getData()
+             << ": "
+             << edge.weight
+             << endl;
+    }
+    cout << "Total cost: " << total_cost << endl;
 }
 /*
 Description:
@@ -595,7 +645,10 @@ Return:
 */
 template<typename T>
 int Graph<T>::find_set(vector<int>& parent, int i) {
-    //TODO
+    if(parent[i] != i) {
+        parent[i] = find_set(parent, parent[i]);
+    }
+    return parent[i];
 }
 /*
 Description:
@@ -604,7 +657,7 @@ Return:
 */
 template<typename T>
 void Graph<T>::union_set(vector<int>& parent, int i, int j) {
-    //TODO
+    parent[find_set(parent, i)] = find_set(parent, j);
 }
 
 //Function to implement 
