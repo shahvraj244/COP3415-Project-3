@@ -27,8 +27,6 @@ class Graph {
         void prim_mst(); 
         //kruskal's minimum span tree
         void kruskal_mst(); 
-        //print function
-        void print() const; 
         //Breadth first search
         void BFS(Vertex<T>& ver); 
         //Depth first search 

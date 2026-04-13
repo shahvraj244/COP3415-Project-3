@@ -133,8 +133,8 @@ void Graph<T>::clean_visited() {
 }
 
 /*
-Description: Read the information from the dataset (a csv file) and create a weighted directed graph G. Note
-that you need to consider two weights for each edge. One is the Distance and the other is Cost.
+Description: Read the information from the dataset (a csv file) and create a weighted directed graph G. 
+Consider two weights for each edge which are Distance and Cost. 
 Parameter: filename - the name of the CSV file to read
 Return: void - nothing
 */
