@@ -43,18 +43,6 @@ void Graph<T>::add_edge(const Vertex<T>& ver1, const Vertex<T>& ver2, int weight
     }
 }
 
-template <typename T>
-void Graph<T>::print() const {
-    for (int i = 0; i < vertices.size(); i++) {
-        cout << "{ " << vertices[i].getData() << ": ";
-        for(int j = 0; j < edges[i].size(); j++) {
-            cout << '{' << vertices[edges[i][j].dest].getData() << ", ";
-            cout << edges[i][j].weight << "} ";
-        }
-        cout << " }\n";
-    }
-}
-
 template <typename T> 
 void Graph<T>::DFS(Vertex<T>& ver) {
     clean_visited();
@@ -237,19 +225,64 @@ appropriate message if no such paths exist
 */
 template<typename T>
 void Graph<T>::short_paths_state(const Vertex<T>& src, const string& state) {
-    cout<<"Shortest paths from "<<src.getData()<<" to "<<state<<" state airports are:"<<endl;
-    bool found = false; //flag to check if any paths were found
-    for(int i = 0; i < vertices.size(); i++) { //iterate through all vertices to find those that match the state
-        if(vertices[i].getData().find(state) != string::npos) {
-            int path_length = dijkstra_shortest_path(src, vertices[i]);
-            if(path_length != INT_MAX) {
-                found = true; 
+    int i_src = get_vertex_index(src); //cehck for a vertex in graph 
+    if (i_src == -1) {
+        cout << "Origin airport not found." << endl;
+        return;
+    }
+    clean_visited();
+    //initialize distances, parent, and total_costs vectors
+    vector<int> distances(vertices.size(), INT_MAX);
+    vector<int> parent(vertices.size(), -1);
+    vector<int> total_costs(vertices.size(), 0);
+    distances[i_src] = 0;
+//STORE EDGES BASED ON DISTANCE IN MIN HEAP 
+    MinHeap<Edge> heap;
+    heap.insert(Edge(i_src, i_src, 0, 0));
+
+    while (!heap.isEmpty()) { //get edge with smallest distance 
+        Edge e = heap.delete_min();
+        int u = e.dest;
+        if (vertices[u].getVisited()) 
+            continue;
+        vertices[u].setVisited(true);
+
+        for (int j = 0; j < edges[u].size(); j++) { //check adjacent edges of u
+            int v = edges[u][j].dest;
+            int weight = edges[u][j].weight;
+            int cost = edges[u][j].cost;
+
+            if (!vertices[v].getVisited() && distances[u] + weight < distances[v]) {
+                distances[v] = distances[u] + weight;
+                parent[v] = u;
+                total_costs[v] = total_costs[u] + cost;
+                heap.insert(Edge(u, v, distances[v], 0));
             }
         }
     }
-    if(!found) {
-        cout<<"No paths found to "<<state<<" state airports."<<endl;
+    cout << "Shortest paths from " << src.getData() << " to " << state << " state airports are:" << endl;
+    bool found = false;
+
+    for (int i = 0; i < vertices.size(); i++) {
+        if (vertices[i].getData().find(state) != string::npos) {
+            if (distances[i] != INT_MAX) {
+                found = true;
+                vector<T> path;
+                for (int cur = i; cur != -1; cur = parent[cur]) {
+                    path.push_back(vertices[cur].getData());
+                }
+                cout << "Shortest route to " << vertices[i].getData() << ": ";
+                for (int p = path.size() - 1; p >= 0; p--) {
+                    cout << path[p] << (p == 0 ? "" : " -> ");
+                }
+                cout << ". The length is " << distances[i] << ". The cost is " << total_costs[i] << "." << endl;
+            }
+        }
     }
+    if (!found) {
+        cout << "No paths found to " << state << " state airports." << endl;
+    }
+    clean_visited();
 }
 
 /*
@@ -258,7 +291,58 @@ number of stops. The algorithm should provide the appropriate message if such pa
 */
 template<typename T>
 void Graph<T>::short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int stops) {
-    //TODO
+    int i_src = get_vertex_index(src);
+    int i_dest = get_vertex_index(dest);
+    if(i_src == -1 || i_dest == -1) {//cehck for a vetex if it exists in graph 
+        cout<<"Shortest route from "<<src.getData()<<" to "<<dest.getData()<<" with "<<stops<<" stops: None"<<endl;
+        return;
+    }
+    int edges_needed = stops + 1; // n stops = n + 1 edges
+    vector<vector<int>> dist(vertices.size(), vector<int>(edges_needed + 1, INT_MAX));
+    vector<vector<int>> parent(vertices.size(), vector<int>(edges_needed + 1, -1));
+    dist[i_src][0] = 0;
+    //find shortest path for each edge count edges
+    for(int e = 1; e <= edges_needed; e++) {
+        for(int u = 0; u < vertices.size(); u++) {
+            if(dist[u][e-1] == INT_MAX) continue;
+            for(int j = 0; j < edges[u].size(); j++) {
+                int v = edges[u][j].dest;
+                int weight = edges[u][j].weight;
+                if(dist[u][e-1] != INT_MAX && dist[u][e-1] + weight < dist[v][e]) {
+                    dist[v][e] = dist[u][e-1] + weight;
+                    parent[v][e] = u;
+                }
+            }
+        }
+    }
+    cout<<"Shortest route from "<<src.getData()<<" to "<<dest.getData()<<" with "<<stops<<" stops: ";
+    if(dist[i_dest][edges_needed] == INT_MAX) {
+        cout<<"None"<<endl;
+    } else {
+        vector<T> path;
+        int cur = i_dest, e = edges_needed;
+        while(cur != -1 && e >= 0) {
+            path.push_back(vertices[cur].getData());
+            cur = parent[cur][e];
+            e--;
+        }
+        for(int i = path.size() - 1; i >= 0; i--) {
+            cout << path[i] << (i == 0 ? "" : " -> ");
+        }
+        int total_cost = 0;
+        int temp_v = i_dest;
+        for(int e = edges_needed; e > 0; e--) {
+            int par = parent[temp_v][e];
+            for(int j = 0; j < edges[par].size(); j++) {
+                if(edges[par][j].dest == temp_v) {
+                    total_cost += edges[par][j].cost;
+                    break;
+                }
+            }
+            temp_v = par;
+        }
+        cout<<". The lenght is "<<dist[i_dest][edges_needed]<<". The cost is "<<total_cost<<"."<<endl;
+    }
 }
 
 //Function to implement 
