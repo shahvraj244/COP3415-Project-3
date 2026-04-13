@@ -21,6 +21,8 @@ class Graph {
         void short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int stops);
         //Disp connections 
         void disp_connections_sort(); 
+        //build undirected graph weighted by cost
+        void cost_graph();
         //prim's minimum span tree
         void prim_mst(); 
         //kruskal's minimum span tree
@@ -41,7 +43,7 @@ class Graph {
         int get_vertex_index(const Vertex<T>& ver);
 
         //Undirected Graph G_u 
-        Graph<T> cost_graph; 
+        Graph<T> cost_graph_data; 
         //helper functions for kruskal 
         int find_set(vector<int>& parent, int i); 
         void union_set(vector<int>& parent, int i, int j); 

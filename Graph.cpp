@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -356,7 +357,35 @@ number of direct flight connections.
 */
 template <typename T>
 void Graph<T>::disp_connections_sort() {
-    //TODO
+    vector<int> inbound(vertices.size(), 0);
+    vector<int> outbound(vertices.size(), 0);
+
+    for(int u = 0; u < edges.size(); u++) {
+        outbound[u] = edges[u].size();
+        for(int j = 0; j < edges[u].size(); j++) {
+            inbound[edges[u][j].dest]++;
+        }
+    }
+
+    vector<pair<int, int>> connection_counts;
+    connection_counts.reserve(vertices.size());
+    for(int i = 0; i < vertices.size(); i++) {
+        connection_counts.push_back(make_pair(inbound[i] + outbound[i], i));
+    }
+
+    sort(connection_counts.begin(), connection_counts.end(),
+        [](const pair<int, int>& a, const pair<int, int>& b) {
+            if(a.first != b.first) {
+                return a.first > b.first;
+            }
+            return a.second < b.second;
+        });
+
+    cout << "Airports sorted by total direct flight connections:" << endl;
+    for(int i = 0; i < connection_counts.size(); i++) {
+        int vertex_index = connection_counts[i].second;
+        cout << vertices[vertex_index].getData() << ": " << connection_counts[i].first << endl;
+    }
 }
 
 /*
@@ -370,7 +399,37 @@ can ignore the distance on that edge.
 */
 template <typename T>
 void Graph<T>::cost_graph(){
-    //TODO
+    const int n = vertices.size();
+
+    this->cost_graph_data.vertices = vertices;
+    this->cost_graph_data.edges.assign(n, vector<Edge>());
+
+    vector<vector<int>> best_cost(n, vector<int>(n, -1));
+
+    for(int u = 0; u < n; u++) {
+        for(int j = 0; j < edges[u].size(); j++) {
+            int v = edges[u][j].dest;
+            int a = min(u, v);
+            int b = max(u, v);
+            int cost = edges[u][j].cost;
+
+            if(best_cost[a][b] == -1 || cost < best_cost[a][b]) {
+                best_cost[a][b] = cost;
+            }
+        }
+    }
+
+    for(int u = 0; u < n; u++) {
+        this->cost_graph_data.edges[u].reserve(edges[u].size());
+    }
+
+    for(int u = 0; u < n; u++) {
+        for(int v = u; v < n; v++) {
+            if(best_cost[u][v] != -1) {
+                this->cost_graph_data.add_edge(this->cost_graph_data.vertices[u], this->cost_graph_data.vertices[v], best_cost[u][v]);
+            }
+        }
+    }
 }
 
 /*
@@ -383,7 +442,63 @@ vertices.
 */
 template <typename T>
 void Graph<T>::prim_mst() {
-    //TODO
+    const int n = cost_graph_data.vertices.size();
+    if(n == 0) {
+        cout << "MST cannot be formed." << endl;
+        return;
+    }
+
+    vector<int> min_cost(n, INT_MAX);
+    vector<int> parent(n, -1);
+    vector<bool> in_mst(n, false);
+
+    MinHeap<Edge> heap;
+    min_cost[0] = 0;
+    heap.insert(Edge(0, 0, 0, 0));
+
+    int visited_count = 0;
+    int total_cost = 0;
+
+    while(!heap.isEmpty() && visited_count < n) {
+        Edge current = heap.delete_min();
+        int u = current.dest;
+
+        if(in_mst[u]) {
+            continue;
+        }
+
+        in_mst[u] = true;
+        visited_count++;
+        total_cost += current.weight;
+
+        for(int i = 0; i < cost_graph_data.edges[u].size(); i++) {
+            const Edge& edge = cost_graph_data.edges[u][i];
+            int v = edge.dest;
+            int weight = edge.weight;
+
+            if(!in_mst[v] && weight < min_cost[v]) {
+                min_cost[v] = weight;
+                parent[v] = u;
+                heap.insert(Edge(u, v, weight, 0));
+            }
+        }
+    }
+
+    if(visited_count != n) {
+        cout << "MST cannot be formed." << endl;
+        return;
+    }
+
+    cout << "Prim MST:" << endl;
+    for(int v = 1; v < n; v++) {
+        cout << cost_graph_data.vertices[parent[v]].getData()
+             << " - "
+             << cost_graph_data.vertices[v].getData()
+             << ": "
+             << min_cost[v]
+             << endl;
+    }
+    cout << "Total cost: " << total_cost << endl;
 }
 
 
