@@ -274,9 +274,9 @@ void Graph<T>::short_paths_state(const Vertex<T>& src, const string& state) {
         cout << "Origin airport not found." << endl;
         return;
     }
-    //Basically copied Dijkstra's algorithm but instead of stopping when we 
-    //reach the destination vertex, we continue until all vertices have been visited.
-    //Then we check which of those vertices belong to the destination state and output
+    //Basically copied Dijkstra's algorithm but instead of stopping when reached,
+    //destination vertex, continue until all vertices have been visited.
+    //Check which of those vertices belong to the destination state and output
     //the paths and distances to those vertices.
     clean_visited(); //reset visited status 
     vector<int> distances(vertices.size(), INT_MAX); //distance as infinity 
@@ -350,23 +350,23 @@ Return: void - nothing
 */
 template<typename T>
 void Graph<T>::short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int stops) {
-    int i_src = get_vertex_index(src);
-    int i_dest = get_vertex_index(dest);
+    int i_src = get_vertex_index(src); //source vertex 
+    int i_dest = get_vertex_index(dest); //destination vertex 
     if(i_src == -1 || i_dest == -1) {//cehck for a vetex if it exists in graph 
         cout<<"Shortest route from "<<src.getData()<<" to "<<dest.getData()<<" with "<<stops<<" stops: None"<<endl;
         return;
     }
     int edges_needed = stops + 1; // n stops = n + 1 edges
-    vector<vector<int>> dist(vertices.size(), vector<int>(edges_needed + 1, INT_MAX));
-    vector<vector<int>> parent(vertices.size(), vector<int>(edges_needed + 1, -1));
+    vector<vector<int>> dist(vertices.size(), vector<int>(edges_needed + 1, INT_MAX)); //shortest distance to v using edges
+    vector<vector<int>> parent(vertices.size(), vector<int>(edges_needed + 1, -1)); //reconsturct path using parent arr 
     dist[i_src][0] = 0;
     //find shortest path for each edge count edges
-    for(int e = 1; e <= edges_needed; e++) {
-        for(int u = 0; u < vertices.size(); u++) {
-            if(dist[u][e-1] == INT_MAX) continue;
-            for(int j = 0; j < edges[u].size(); j++) {
-                int v = edges[u][j].dest;
-                int weight = edges[u][j].weight;
+    for(int e = 1; e <= edges_needed; e++) { //edge count 
+        for(int u = 0; u < vertices.size(); u++) { //traverse through vertices to find shortest path to vertex edge 
+            if(dist[u][e-1] == INT_MAX) continue; //if no path to u with e-1 edges then skip 
+            for(int j = 0; j < edges[u].size(); j++) { //traverse through adjacent edges of u to find path 
+                int v = edges[u][j].dest; //destination vertex of edge 
+                int weight = edges[u][j].weight; //weight of edge
                 if(dist[u][e-1] != INT_MAX && dist[u][e-1] + weight < dist[v][e]) {
                     dist[v][e] = dist[u][e-1] + weight;
                     parent[v][e] = u;
@@ -374,23 +374,24 @@ void Graph<T>::short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int
             }
         }
     }
+    //output design for shortest path with stops 
     cout<<"Shortest route from "<<src.getData()<<" to "<<dest.getData()<<" with "<<stops<<" stops: ";
-    if(dist[i_dest][edges_needed] == INT_MAX) {
+    if(dist[i_dest][edges_needed] == INT_MAX) { //if no path found the none as output 
         cout<<"None"<<endl;
-    } else {
+    } else { 
         vector<T> path;
-        int cur = i_dest, e = edges_needed;
-        while(cur != -1 && e >= 0) {
-            path.push_back(vertices[cur].getData());
+        int cur = i_dest, e = edges_needed; 
+        while(cur != -1 && e >= 0) {//reconstruct path from dest to source using parent arr
+            path.push_back(vertices[cur].getData());//add current vertex to path 
             cur = parent[cur][e];
             e--;
         }
-        for(int i = path.size() - 1; i >= 0; i--) {
+        for(int i = path.size() - 1; i >= 0; i--) { //output path from source to dest 
             cout << path[i] << (i == 0 ? "" : " -> ");
         }
-        int total_cost = 0;
-        int temp_v = i_dest;
-        for(int e = edges_needed; e > 0; e--) {
+        int total_cost = 0; //calc total cost of path by traversing through parrent arr and sum cost of edges 
+        int temp_v = i_dest; 
+        for(int e = edges_needed; e > 0; e--) { //find parent vertex and add cost 
             int par = parent[temp_v][e];
             for(int j = 0; j < edges[par].size(); j++) {
                 if(edges[par][j].dest == temp_v) {
