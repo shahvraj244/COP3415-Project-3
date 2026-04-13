@@ -345,6 +345,69 @@ void Graph<T>::short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int
     }
 }
 
+/*
+5. Count and display total direct flight connections to each airport. You should consider both
+outbound and inbound flights. For instance, if you can directly fly to Tampa airport only from
+Miami, Orlando, and Atlanta, the inbound count for Tampa airport would be 3. If you can directly
+fly from Tampa airport only to New York, the outbound count for Tampa airport is 1. The total
+number of direct flight connections for Tampa airport is 4. The list of airports should be sorted
+based on the total direct flight connections count, starting with the airports having the highest
+number of direct flight connections.
+*/
+template <typename T>
+void Graph<T>::disp_connections_sort() {
+    //TODO
+}
+
+/*
+6. Create an undirected graph G_u from the original directed graph G using the following rules:
+a. For each pair of vertices u and v, if there is only one directed edge(either (u,v) or (v,u))
+between them, you keep that single edge with its corresponding cost as an undirected
+weighted edge. You can ignore the distance on that edge.
+b. For each pair of vertices u and v, if there are two directed edges (u,v) and (v, u) between
+them, you keep the one with the minimum cost value as an undirected weighted edge. You
+can ignore the distance on that edge.
+*/
+template <typename T>
+void Graph<T>::cost_graph(){
+    //TODO
+}
+
+/*
+7.Generate a Minimal Spanning Tree utilizing Prim’s algorithm on G_u that you created in the
+previous step. The algorithm will output both the content of the constructed MST and its total cost.
+In this step, for each edge you need to consider the cost as weight to minimize the total cost. In the
+event of a disconnected graph, the algorithm will appropriately notify that an MST cannot be
+formed. Note: A connected graph is defined as one where there exists a path between every pair of
+vertices.
+*/
+template <typename T>
+void Graph<T>::prim_mst() {
+    //TODO
+}
+
+
+/*
+8.Generate a Minimal Spanning Tree using Kruskal’s algorithm on G_u that you created in the
+previous step. The algorithm will output both the content of the constructed MST and its total cost.
+In this step, for each edge you need to consider the cost as weight to minimize the total cost. If the
+graph is disconnected the algorithm should provide minimum spanning forest consisting of a
+minimum spanning tree for each connected component
+*/
+template<typenname T>
+int Graph<T>::find_set(vector<int>& parent, int i) {
+    //TODO
+}
+
+template<typename T>
+void Graph<T>::union_set(vector<int>& parent, int i, int j) {
+    //TODO
+}
+
+template <typename T>
+void Graph<T>::kruskal_mst() {
+    //TODO
+}
 //Function to implement 
 /*
         //read from csv file 
