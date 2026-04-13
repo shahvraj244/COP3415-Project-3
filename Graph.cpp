@@ -2,6 +2,7 @@
 #include "MinHeap.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <string>
 
 using namespace std;
@@ -61,16 +62,6 @@ void Graph<T>::DFS(Vertex<T>& ver) {
     clean_visited();
 }
 
-template <typename T>
-void print_queue(std::queue<Vertex<T>> q) {
-  while (!q.empty())
-  {
-    cout << q.front().getData() << " ";
-    q.pop();
-  }
-  cout << endl;
-}
-
 template <typename T> 
 void Graph<T>::BFS(Vertex<T>& ver) {
     clean_visited();
@@ -122,51 +113,152 @@ void Graph<T>::clean_visited() {
     }
 }
 
+/*
+1. Read the information from the dataset (a csv file) and create a weighted directed graph G. Note
+that you need to consider two weights for each edge. One is the Distance and the other is Cost.
+*/
+template<typename T>
+Graph<T>::Graph(const string& filename) {
+    ifstream file(filename); 
+    string line; 
 
+    if(!file.is_open()) {
+        throw string("Could not open file\n"); 
+    }
+    getline(file,line); 
+    while(getline(file,line)) {
+        if(line.empty()) {
+            continue;
+        }
+        string fields[6];
+        size_t start = 0; 
+
+        for(int i = 0; i < 6; i++) {
+            if(start < line.length() && line[start] == '"') {
+                start++;
+                size_t end = line.find('"', start); 
+                fields[i] = line.substr(start, end - start); 
+                start = line.find(',', end) + 1; 
+            } else {
+                size_t next = line.find(',', start);
+                fields[i] = line.substr(start, next - start);
+                start = next + 1;
+            }
+        }
+        Vertex<T> v1(fields[0]);
+        Vertex<T> v2(fields[1]); 
+        int distance = stoi(fields[4]);
+        int cost = stoi(fields[5]);
+        
+        insert_vertex(v1);
+        insert_vertex(v2);
+
+        int i1 = get_vertex_index(v1);
+        int i2 = get_vertex_index(v2);
+        if(i1 != -1 && i2 != -1) {
+            edges[i1].push_back(Edge(i1, i2, distance, cost));
+        }
+    }
+    file.close();
+}
+
+/*
+2. Find the shortest path between the given origin airport and destination airport. The algorithm
+should output both the path and the length of the path. The algorithm should provide the
+appropriate message if such path doesn't exist.
+*/
 template<typename T>
 int Graph<T>::dijkstra_shortest_path(const Vertex<T>& src, const Vertex<T>& dest) {
     int i_src = get_vertex_index(src);
     int i_dest = get_vertex_index(dest);
-    if (i_src == -1 || i_dest == -1) {
-        throw std::string("Shortest path: incorrect vertices"); 
+    if(i_src == -1 || i_dest == -1) {
+        throw string("Shortest path: incorrect vertices\n");
     }
-
     clean_visited();
-    std::vector<int> distances(vertices.size(), INT_MAX);
+    vector<int> distances(vertices.size(), INT_MAX);
+    vector<int> parent(vertices.size(), -1);
     distances[i_src] = 0;
 
     MinHeap<Edge> heap;
-    // For Dijkstra, the weight in the heap represents the total distance from source
-    heap.insert(Edge(i_src, i_src, 0));
+    heap.insert(Edge(i_src, i_src, 0, 0));
 
-    // Use isEmpty() check instead of try-catch
-    while (!heap.isEmpty()) {
+    while(!heap.isEmpty()) {
         Edge e = heap.delete_min();
-
         int u = e.dest;
-        if (vertices[u].getVisited()) {
+        if(vertices[u].getVisited())
             continue;
-        }
         vertices[u].setVisited(true);
-
-        // Optimization: stop if we reached the destination
-        if (u == i_dest) {
+        if(u == i_dest)
             break;
-        }
-
-        // Use standard for-loop instead of range-based auto
-        for (int j = 0; j < (int)edges[u].size(); j++) {
+        for(int j = 0; j < edges[u].size(); j++) {
             int v = edges[u][j].dest;
             int weight = edges[u][j].weight;
-            
-            if (!vertices[v].getVisited() && (distances[u] + weight < distances[v])) {
+            if(!vertices[v].getVisited() && distances[u] != INT_MAX && distances[u] + weight < distances[v]) {
                 distances[v] = distances[u] + weight;
-                heap.insert(Edge(u, v, distances[v]));
+                parent[v] = u;
+                heap.insert(Edge(u, v, distances[v], 0));
             }
         }
     }
+
+    cout << "Shortest route from " << src.getData() << " to " << dest.getData() << ": ";
+    if(distances[i_dest] == INT_MAX) {
+        cout << "None" << endl;
+    } else {
+        // Backtrack path
+        vector<T> path;
+        for(int cur = i_dest; cur != -1; cur = parent[cur]) {
+            path.push_back(vertices[cur].getData());
+        }
+        for(int i = path.size() - 1; i >= 0; i--) {
+            cout << path[i] << (i == 0 ? "" : " -> ");
+        }
+        int total_cost = 0;
+        for(int cur = i_dest; parent[cur] != -1; cur = parent[cur]) {
+            int par = parent[cur];
+            for(int j = 0; j < edges[par].size(); j++) {
+                if(edges[par][j].dest == cur) {
+                    total_cost += edges[par][j].cost;
+                    break;
+                }
+            }
+        }
+
+        cout << ". The length is " << distances[i_dest] << ". The cost is " << total_cost << "." << endl;
+    }
     clean_visited();
     return distances[i_dest];
+}
+
+/*
+3.Find all shortest paths between the given origin airport and all the airports in the destination state.
+The algorithm should output all the paths and their lengths. The algorithm should provide the
+appropriate message if no such paths exist
+*/
+template<typename T>
+void Graph<T>::short_paths_state(const Vertex<T>& src, const string& state) {
+    cout<<"Shortest paths from "<<src.getData()<<" to "<<state<<" state airports are:"<<endl;
+    bool found = false; //flag to check if any paths were found
+    for(int i = 0; i < vertices.size(); i++) { //iterate through all vertices to find those that match the state
+        if(vertices[i].getData().find(state) != string::npos) {
+            int path_length = dijkstra_shortest_path(src, vertices[i]);
+            if(path_length != INT_MAX) {
+                found = true; 
+            }
+        }
+    }
+    if(!found) {
+        cout<<"No paths found to "<<state<<" state airports."<<endl;
+    }
+}
+
+/*
+4. Find the shortest path between the given origin airport and destination airport with a given
+number of stops. The algorithm should provide the appropriate message if such path doesn’t exist.
+*/
+template<typename T>
+void Graph<T>::short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int stops) {
+    //TODO
 }
 
 //Function to implement 
