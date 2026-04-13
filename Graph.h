@@ -43,7 +43,7 @@ class Graph {
         int get_vertex_index(const Vertex<T>& ver);
 
         //Undirected Graph G_u 
-        Graph<T> cost_graph_data; 
+        Graph<T>* cost_graph_data; 
         //helper functions for kruskal 
         int find_set(vector<int>& parent, int i); 
         void union_set(vector<int>& parent, int i, int j); 
