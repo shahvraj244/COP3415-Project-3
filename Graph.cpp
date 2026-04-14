@@ -466,7 +466,7 @@ Description:
 Parameter:
 Return:
 */
-template <typename T>
+/*template <typename T>
 void Graph<T>::cost_graph(){
     const int n = vertices.size();
 
@@ -499,6 +499,33 @@ void Graph<T>::cost_graph(){
             }
         }
     }
+}*/
+template <typename T>
+Graph<T> Graph<T>::cost_graph() {
+    Graph<T> result; 
+    const int n = vertices.size();
+    result.vertices = vertices;
+    result.edges.assign(n, vector<Edge>());
+    vector<vector<int>> best_cost(n, vector<int>(n, -1)); 
+    for(int u = 0; u < n; u++) {
+        for(int j = 0; j < edges[u].size(); j++) {
+            int v = edges[u][j].dest;
+            int a = min(u,v);
+            int b = max(u,v);
+            int cost = edges[u][j].cost;
+            if(best_cost[a][b] == -1 || cost < best_cost[a][b]) {
+                best_cost[a][b] = cost;
+            }
+        }
+    }
+    for (int u = 0; u < n; u++) {
+        for(int v = u; v < n; v++) {
+            if(best_cost[u][v] != -1) {
+                result.add_edge(result.vertices[u], result.vertices[v], best_cost[u][v]);
+            }
+        }
+    }
+    return result;
 }
 
 /*
