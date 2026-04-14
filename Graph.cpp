@@ -466,7 +466,7 @@ Description:
 Parameter:
 Return:
 */
-/*template <typename T>
+template <typename T>
 void Graph<T>::cost_graph(){
     const int n = vertices.size();
 
@@ -499,8 +499,8 @@ void Graph<T>::cost_graph(){
             }
         }
     }
-}*/
-template <typename T>
+}
+/*template <typename T>
 Graph<T> Graph<T>::cost_graph() {
     Graph<T> result; 
     const int n = vertices.size();
@@ -527,7 +527,7 @@ Graph<T> Graph<T>::cost_graph() {
     }
     return result;
 }
-
+*/
 /*
 7.Generate a Minimal Spanning Tree utilizing Prim’s algorithm on G_u that you created in the
 previous step. The algorithm will output both the content of the constructed MST and its total cost.
