@@ -9,7 +9,7 @@ using namespace std;
 
 int main() {
     try {
-        cout << "--- Loading Graph from CSV ---" << endl;
+        cout << "--- Graph-Based Airport Connectivity and Flight Route Optimization System ---" << endl;
         Graph<string> airportGraph("airports.csv");
         cout << "Graph loaded successfully.\n" << endl;
         
@@ -23,8 +23,8 @@ int main() {
         airportGraph.dijkstra_shortest_path(vABE, vDTW);
         cout << endl;
 
-        cout << "--- Testing Task 3: Shortest Paths to State (MI) ---" << endl;
-        airportGraph.short_paths_state(vALB, "DTW"); // Searching for DTW in Michigan
+        cout << "--- Testing Task 3: Shortest Paths to State ---" << endl;
+        airportGraph.short_paths_state(vALB, "DTW"); 
         cout << endl;
 
         cout << "--- Testing Task 4: Shortest Path with Stops ---" << endl;
@@ -35,10 +35,21 @@ int main() {
         airportGraph.short_path_stops(vALB, vDTW, 1);
         cout << endl;
 
+        cout << "--- Testing Task 5: Direct Flight Connection ---" << endl;
+        airportGraph.disp_connections_sort();
+        cout << endl;
+        /*
+        cout << "--- Testing Task 6: Prim's Minimum Spanning Tree ---" << endl;
+        airportGraph.prim_mst();
+        cout << endl;
+        */
+        /*cout << "--- Testing Task 7: Kruskal's Minimum Spanning Tree ---" << endl;
+        airportGraph.kruskal_mst();
+        cout << endl;*/
     } catch (const string& e) {
-        cerr << "Error: " << e << endl;
+        cout << "Error: " << e << endl;
     } catch (const exception& e) {
-        cerr << "Standard Exception: " << e.what() << endl;
+        cout << "Standard Exception: " << e.what() << endl;
     }
 
     return 0;
