@@ -89,3 +89,12 @@ int MinHeap<T>::min_index(int i1, int i2) const {
 
     return (data[i1] < data[i2] ? i1 : i2);
 }
+//heap by storing vector of data fuction
+template <typename T>
+MinHeap<T>::MinHeap(vector<T> v) {
+    data = v; 
+    size = data.size(); 
+    for(int i = size/2 - 1; i >= 0; i--) {
+        percolate_down(i); 
+    }
+}
