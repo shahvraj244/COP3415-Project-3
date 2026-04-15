@@ -38,14 +38,14 @@ int main() {
         cout << "--- Testing Task 5: Direct Flight Connection ---" << endl;
         airportGraph.disp_connections_sort();
         cout << endl;
-        /*
+        
         cout << "--- Testing Task 6: Prim's Minimum Spanning Tree ---" << endl;
         airportGraph.prim_mst();
         cout << endl;
-        */
-        /*cout << "--- Testing Task 7: Kruskal's Minimum Spanning Tree ---" << endl;
+        
+        cout << "--- Testing Task 7: Kruskal's Minimum Spanning Tree ---" << endl;
         airportGraph.kruskal_mst();
-        cout << endl;*/
+        cout << endl;
     } catch (const string& e) {
         cout << "Error: " << e << endl;
     } catch (const exception& e) {

@@ -139,7 +139,7 @@ Parameter: filename - the name of the CSV file to read
 Return: void - nothing
 */
 template<typename T>
-Graph<T>::Graph(const string& filename) {
+Graph<T>::Graph(const string& filename) : cost_graph_data(nullptr) {
     ifstream file(filename); //open file for reading 
     string line; //variable to store lines of file
 
@@ -470,8 +470,12 @@ template <typename T>
 void Graph<T>::cost_graph(){
     const int n = vertices.size();
 
-    this->cost_graph_data.vertices = vertices;
-    this->cost_graph_data.edges.assign(n, vector<Edge>());
+    if(this->cost_graph_data == nullptr) {
+        this->cost_graph_data = new Graph<T>();
+    }
+
+    this->cost_graph_data->vertices = vertices;
+    this->cost_graph_data->edges.assign(n, vector<Edge>());
 
     vector<vector<int>> best_cost(n, vector<int>(n, -1));
 
@@ -489,13 +493,13 @@ void Graph<T>::cost_graph(){
     }
 
     for(int u = 0; u < n; u++) {
-        this->cost_graph_data.edges[u].reserve(edges[u].size());
+        this->cost_graph_data->edges[u].reserve(edges[u].size());
     }
 
     for(int u = 0; u < n; u++) {
         for(int v = u; v < n; v++) {
             if(best_cost[u][v] != -1) {
-                this->cost_graph_data.add_edge(this->cost_graph_data.vertices[u], this->cost_graph_data.vertices[v], best_cost[u][v]);
+                this->cost_graph_data->add_edge(this->cost_graph_data->vertices[u], this->cost_graph_data->vertices[v], best_cost[u][v]);
             }
         }
     }
@@ -543,7 +547,11 @@ Return:
 */
 template <typename T>
 void Graph<T>::prim_mst() {
-    const int n = cost_graph_data.vertices.size();
+    if(cost_graph_data == nullptr) {
+        cost_graph();
+    }
+
+    const int n = cost_graph_data->vertices.size();
     if(n == 0) {
         cout << "MST cannot be formed." << endl;
         return;
@@ -572,8 +580,8 @@ void Graph<T>::prim_mst() {
         visited_count++;
         total_cost += current.weight;
 
-        for(int i = 0; i < cost_graph_data.edges[u].size(); i++) {
-            const Edge& edge = cost_graph_data.edges[u][i];
+        for(int i = 0; i < cost_graph_data->edges[u].size(); i++) {
+            const Edge& edge = cost_graph_data->edges[u][i];
             int v = edge.dest;
             int weight = edge.weight;
 
@@ -592,9 +600,9 @@ void Graph<T>::prim_mst() {
 
     cout << "Prim MST:" << endl;
     for(int v = 1; v < n; v++) {
-        cout << cost_graph_data.vertices[parent[v]].getData()
+        cout << cost_graph_data->vertices[parent[v]].getData()
              << " - "
-             << cost_graph_data.vertices[v].getData()
+             << cost_graph_data->vertices[v].getData()
              << ": "
              << min_cost[v]
              << endl;
@@ -614,7 +622,11 @@ Return:
 */
 template <typename T>
 void Graph<T>::kruskal_mst() {
-    const int n = cost_graph_data.vertices.size();
+    if(cost_graph_data == nullptr) {
+        cost_graph();
+    }
+
+    const int n = cost_graph_data->vertices.size();
     if(n == 0) {
         cout << "Kruskal MST:" << endl;
         cout << "Total cost: 0" << endl;
@@ -623,8 +635,8 @@ void Graph<T>::kruskal_mst() {
 
     vector<Edge> all_edges;
     for(int u = 0; u < n; u++) {
-        for(int j = 0; j < cost_graph_data.edges[u].size(); j++) {
-            const Edge& edge = cost_graph_data.edges[u][j];
+        for(int j = 0; j < cost_graph_data->edges[u].size(); j++) {
+            const Edge& edge = cost_graph_data->edges[u][j];
             if(edge.src < edge.dest) {
                 all_edges.push_back(edge);
             }
@@ -657,9 +669,9 @@ void Graph<T>::kruskal_mst() {
     cout << "Kruskal MST:" << endl;
     for(int i = 0; i < mst_edges.size(); i++) {
         const Edge& edge = mst_edges[i];
-        cout << cost_graph_data.vertices[edge.src].getData()
+        cout << cost_graph_data->vertices[edge.src].getData()
              << " - "
-             << cost_graph_data.vertices[edge.dest].getData()
+             << cost_graph_data->vertices[edge.dest].getData()
              << ": "
              << edge.weight
              << endl;

@@ -9,7 +9,7 @@ using namespace std;
 template <typename T>
 class Graph {
     public:
-        Graph() {}
+        Graph() : cost_graph_data(nullptr) {}
         //insert vertex and edge with weights of distance and cost 
         void insert_vertex(const Vertex<T>& ver); 
         void add_edge(const Vertex<T>& ver1, const Vertex<T>& ver2, int weight);
