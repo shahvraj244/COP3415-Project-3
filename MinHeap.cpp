@@ -89,7 +89,7 @@ int MinHeap<T>::min_index(int i1, int i2) const {
 
     return (data[i1] < data[i2] ? i1 : i2);
 }
-//heap by storing vector of data fuction
+//Heapify function
 template <typename T>
 MinHeap<T>::MinHeap(vector<T> v) {
     data = v; 
