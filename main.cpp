@@ -39,7 +39,9 @@ int main() {
         airportGraph.disp_connections_sort();
         cout << endl;
         
+        airportGraph.cost_graph(); //define the cost_graph function 
         cout << "--- Testing Task 6: Prim's Minimum Spanning Tree ---" << endl;
+        
         airportGraph.prim_mst();
         cout << endl;
         
