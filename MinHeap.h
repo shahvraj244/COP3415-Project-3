@@ -14,7 +14,7 @@ class MinHeap {
         T delete_min(); 
 
         bool isEmpty() const {
-            return size == 0; 
+            return data.empty(); 
         }
     private:
         vector<T> data;

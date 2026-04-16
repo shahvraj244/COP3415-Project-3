@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <algorithm>
 
 using namespace std;
 
@@ -421,6 +420,18 @@ Return:
 */
 template <typename T>
 void Graph<T>::disp_connections_sort() {
+    struct ConnectionCount {
+        int total_connections;
+        int vertex_index;
+
+        bool operator<(const ConnectionCount& other) const {
+            if(total_connections != other.total_connections) {
+                return total_connections > other.total_connections;
+            }
+            return vertex_index < other.vertex_index;
+        }
+    };
+
     vector<int> inbound(vertices.size(), 0);
     vector<int> outbound(vertices.size(), 0);
 
@@ -431,24 +442,18 @@ void Graph<T>::disp_connections_sort() {
         }
     }
 
-    vector<pair<int, int>> connection_counts;
+    vector<ConnectionCount> connection_counts;
     connection_counts.reserve(vertices.size());
     for(int i = 0; i < vertices.size(); i++) {
-        connection_counts.push_back(make_pair(inbound[i] + outbound[i], i));
+        connection_counts.push_back({inbound[i] + outbound[i], i});
     }
 
-    sort(connection_counts.begin(), connection_counts.end(),
-        [](const pair<int, int>& a, const pair<int, int>& b) {
-            if(a.first != b.first) {
-                return a.first > b.first;
-            }
-            return a.second < b.second;
-        });
+    MinHeap<ConnectionCount> heap(connection_counts);
 
     cout << "Airports sorted by total direct flight connections:" << endl;
-    for(int i = 0; i < connection_counts.size(); i++) {
-        int vertex_index = connection_counts[i].second;
-        cout << vertices[vertex_index].getData() << ": " << connection_counts[i].first << endl;
+    while(!heap.isEmpty()) {
+        ConnectionCount current = heap.delete_min();
+        cout << vertices[current.vertex_index].getData() << ": " << current.total_connections << endl;
     }
 }
 
@@ -643,7 +648,7 @@ void Graph<T>::kruskal_mst() {
         }
     }
 
-    sort(all_edges.begin(), all_edges.end());
+    MinHeap<Edge> edge_heap(all_edges);
 
     vector<int> parent(n);
     for(int i = 0; i < n; i++) {
@@ -654,8 +659,8 @@ void Graph<T>::kruskal_mst() {
     mst_edges.reserve(n > 0 ? n - 1 : 0);
     int total_cost = 0;
 
-    for(int i = 0; i < all_edges.size(); i++) {
-        const Edge& edge = all_edges[i];
+    while(!edge_heap.isEmpty()) {
+        Edge edge = edge_heap.delete_min();
         int root_u = find_set(parent, edge.src);
         int root_v = find_set(parent, edge.dest);
 

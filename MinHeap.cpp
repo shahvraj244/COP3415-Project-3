@@ -2,11 +2,19 @@
 #include <iostream>
 
 template<typename T>
+MinHeap<T>::MinHeap(vector<T> v) : data(v), size(v.size()) {
+    for(int i = size / 2 - 1; i >= 0; i--) {
+        percolate_down(i);
+    }
+}
+
+template<typename T>
 void MinHeap<T>::insert(const T& val) {
     data.push_back(val);
+    size++;
     int n = data.size() - 1; //index of the last node
     //percolate UP
-    while (data[n] < data[(n - 1) / 2]) {
+    while (n > 0 && data[n] < data[(n - 1) / 2]) {
         swap(data[n], data[(n - 1) / 2]);
         n = (n - 1) / 2; //make cur index equal to the parent index
     }
@@ -34,8 +42,16 @@ template<typename T>
 T MinHeap<T>::delete_min() {
     if (data.empty()) {
         throw string("delete_min: Empty Heap\n");
-    }    
+    }
+
     T res = data[0];
+    size--;
+
+    if(data.size() == 1) {
+        data.pop_back();
+        return res;
+    }
+
     data[0] = data[data.size() - 1]; //set the root with the value of the last node
     data.pop_back(); //deletes the last node
 
