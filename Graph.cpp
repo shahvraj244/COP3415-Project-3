@@ -458,16 +458,13 @@ void Graph<T>::disp_connections_sort() {
 }
 
 /*
-6. Create an undirected graph G_u from the original directed graph G using the following rules:
+Description: Create an undirected graph G_u from the original directed graph G using the following rules:
 a. For each pair of vertices u and v, if there is only one directed edge(either (u,v) or (v,u))
 between them, you keep that single edge with its corresponding cost as an undirected
 weighted edge. You can ignore the distance on that edge.
 b. For each pair of vertices u and v, if there are two directed edges (u,v) and (v, u) between
 them, you keep the one with the minimum cost value as an undirected weighted edge. You
 can ignore the distance on that edge.
-*/
-/*
-Description:
 Parameter:
 Return:
 */
