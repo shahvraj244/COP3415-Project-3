@@ -400,7 +400,7 @@ void Graph<T>::short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int
             }
             temp_v = par;
         }
-        cout<<". The lenght is "<<dist[i_dest][edges_needed]<<". The cost is "<<total_cost<<"."<<endl;
+        cout<<". The length is "<<dist[i_dest][edges_needed]<<". The cost is "<<total_cost<<"."<<endl;
     }
 }
 
@@ -509,108 +509,71 @@ void Graph<T>::cost_graph(){
         }
     }
 }
-/*template <typename T>
-Graph<T> Graph<T>::cost_graph() {
-    Graph<T> result; 
-    const int n = vertices.size();
-    result.vertices = vertices;
-    result.edges.assign(n, vector<Edge>());
-    vector<vector<int>> best_cost(n, vector<int>(n, -1)); 
-    for(int u = 0; u < n; u++) {
-        for(int j = 0; j < edges[u].size(); j++) {
-            int v = edges[u][j].dest;
-            int a = min(u,v);
-            int b = max(u,v);
-            int cost = edges[u][j].cost;
-            if(best_cost[a][b] == -1 || cost < best_cost[a][b]) {
-                best_cost[a][b] = cost;
-            }
-        }
-    }
-    for (int u = 0; u < n; u++) {
-        for(int v = u; v < n; v++) {
-            if(best_cost[u][v] != -1) {
-                result.add_edge(result.vertices[u], result.vertices[v], best_cost[u][v]);
-            }
-        }
-    }
-    return result;
-}
-*/
+
 /*
-7.Generate a Minimal Spanning Tree utilizing Prim’s algorithm on G_u that you created in the
+Description: Generate a Minimal Spanning Tree utilizing Prim’s algorithm on G_u that you created in the
 previous step. The algorithm will output both the content of the constructed MST and its total cost.
 In this step, for each edge you need to consider the cost as weight to minimize the total cost. In the
 event of a disconnected graph, the algorithm will appropriately notify that an MST cannot be
 formed. Note: A connected graph is defined as one where there exists a path between every pair of
 vertices.
-*/
-/*
-Description:
 Parameter:
 Return:
 */
 template <typename T>
 void Graph<T>::prim_mst() {
-    if(cost_graph_data == nullptr) {
-        cost_graph();
-    }
+    if(cost_graph_data == nullptr) cost_graph();
 
     const int n = cost_graph_data->vertices.size();
-    if(n == 0) {
-        cout << "MST cannot be formed." << endl;
-        return;
-    }
-
+    vector<bool> in_mst(n, false);
     vector<int> min_cost(n, INT_MAX);
     vector<int> parent(n, -1);
-    vector<bool> in_mst(n, false);
-
-    MinHeap<Edge> heap;
-    min_cost[0] = 0;
-    heap.insert(Edge(0, 0, 0, 0));
-
-    int visited_count = 0;
     int total_cost = 0;
+    int visited_count = 0;
 
-    while(!heap.isEmpty() && visited_count < n) {
-        Edge current = heap.delete_min();
-        int u = current.dest;
-
-        if(in_mst[u]) {
+    for (int start_node = 0; start_node < n; start_node++) {
+        if (in_mst[start_node]) 
             continue;
-        }
+        MinHeap<Edge> heap;
+        min_cost[start_node] = 0;
+        heap.insert(Edge(start_node, start_node, 0, 0));
+        while (!heap.isEmpty()) {
+            Edge current = heap.delete_min();
+            int u = current.dest;
 
-        in_mst[u] = true;
-        visited_count++;
-        total_cost += current.weight;
+            if (in_mst[u]) 
+                continue;
 
-        for(int i = 0; i < cost_graph_data->edges[u].size(); i++) {
-            const Edge& edge = cost_graph_data->edges[u][i];
+            in_mst[u] = true;
+            visited_count++;
+            total_cost += current.weight;
+
+           for(int j = 0; j < cost_graph_data->edges[u].size(); j++) {
+            Edge& edge = cost_graph_data->edges[u][j];
             int v = edge.dest;
             int weight = edge.weight;
 
             if(!in_mst[v] && weight < min_cost[v]) {
                 min_cost[v] = weight;
                 parent[v] = u;
-                heap.insert(Edge(u, v, weight, 0));
+                heap.insert(Edge(u,v,weight,0));
             }
         }
     }
-
-    if(visited_count != n) {
+}
+    // Now check if we visited anything at all
+    if (visited_count == 0) {
         cout << "MST cannot be formed." << endl;
         return;
     }
 
+    // Output results
     cout << "Prim MST:" << endl;
-    for(int v = 1; v < n; v++) {
-        cout << cost_graph_data->vertices[parent[v]].getData()
-             << " - "
-             << cost_graph_data->vertices[v].getData()
-             << ": "
-             << min_cost[v]
-             << endl;
+    for (int i = 0; i < n; i++) {
+        if (parent[i] != -1) {
+            cout << cost_graph_data->vertices[parent[i]].getData() << " - " 
+                 << cost_graph_data->vertices[i].getData() << ": " << min_cost[i] << endl;
+        }
     }
     cout << "Total cost: " << total_cost << endl;
 }
@@ -704,23 +667,3 @@ template<typename T>
 void Graph<T>::union_set(vector<int>& parent, int i, int j) {
     parent[find_set(parent, i)] = find_set(parent, j);
 }
-
-//Function to implement 
-/*
-        //read from csv file 
-        Graph(const string& filename);
-        //Undirected Graph G_u 
-        Graph<T> cost_graph; 
-        //helper functions for kruskal 
-        int find_set(vector<int>& parent, int i); 
-        void union_set(vector<int>& parent, int i, int j);
-        void short_paths_state(const Vertex<T>& src, const string& state);
-        //short path with stops 
-        void short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int stops);
-        //Disp connections 
-        void disp_connections_sort(); 
-        //prim's minimum span tree
-        void prim_mst(); 
-        //kruskal's minimum span tree
-        void kruskal_mst(); 
-*/
