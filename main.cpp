@@ -11,28 +11,39 @@ int main() {
     try {
         cout << "--- Graph-Based Airport Connectivity and Flight Route Optimization System ---" << endl;
         Graph<string> airportGraph("airports.csv");
-        cout << "Graph loaded successfully.\n" << endl;
+        cout<<endl;
         
-        Vertex<string> vALB("ALB");
-        Vertex<string> vBOS("BOS");
-        Vertex<string> vDTW("DTW");
-        Vertex<string> vABE("ABE");
+        Vertex<string> vATL("ATL"); 
+        Vertex<string> vIAD("IAD"); 
+        Vertex<string> vMIA("MIA"); 
+        Vertex<string> vORD("ORD"); 
+        Vertex<string> vPIT("PIT"); 
+        Vertex<string> vACT("ACT"); 
+        Vertex<string> vTPA("TPA");
+        Vertex<string> vMCO("MCO");
+        Vertex<string> vJFK("JFK");
 
         cout << "--- Task 2: Dijkstra Shortest Path ---" << endl;
-        airportGraph.dijkstra_shortest_path(vALB, vBOS);
-        airportGraph.dijkstra_shortest_path(vABE, vDTW);
+        cout << "Shortest route from IAD to MIA: ";
+        airportGraph.dijkstra_shortest_path(vIAD, vMIA);
+
+        cout << "Shortest route from PIT to ACT: ";
+        airportGraph.dijkstra_shortest_path(vPIT, vACT);
         cout << endl;
 
         cout << "--- Task 3: Shortest Paths to State ---" << endl;
-        airportGraph.short_paths_state(vALB, "DTW"); 
+        cout << "Shortest paths from ATL to FL state airports are:" << endl;
+        airportGraph.short_paths_state(vATL, "FL");
         cout << endl;
 
         cout << "--- Task 4: Shortest Path with Stops ---" << endl;
-        cout << "Testing ALB to BOS with 0 stops:" << endl;
-        airportGraph.short_path_stops(vALB, vBOS, 0);
-        
-        cout << "\nTesting ALB to DTW with 1 stop:" << endl;
-        airportGraph.short_path_stops(vALB, vDTW, 1);
+
+        cout << "Shortest route from IAD to MI A with 3 stops: ";
+        airportGraph.short_path_stops(vIAD, vMIA, 3);
+
+        cout << "Shortest route from PIT to ACT with 2 stops: ";
+        airportGraph.short_path_stops(vPIT, vACT, 2);
+
         cout << endl;
 
         cout << "--- Task 5: Direct Flight Connection ---" << endl;
