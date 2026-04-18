@@ -7,6 +7,73 @@
 
 using namespace std;
 
+void disp() {
+    cout<<"\n----Airport System-----\n";
+    cout<<"1. Dijkstra Shortest Path\n";
+    cout<<"2. Shortest Paths to State\n";
+    cout<<"3. Shortest Path with Stops\n";
+    cout<<"4. Display all Connections\n";
+    cout<<"5. Prim's Minimum Spanning Tree\n";
+    cout<<"6. Kruskal's Minimum Spanning Tree\n";
+    cout<<"0. Exit\n";
+    cout<<"Enter choice: ";
+}
+int main() {
+    Graph<string> airportGraph("airports.csv");
+    int choice = -1;
+    string src, dest, state;
+    int stops; 
+
+    cout<<"--- Graph-Based Airport Connectivity System Loaded ---\n";
+    while(choice != 0) {
+        disp();
+        cin>>choice;
+
+        switch(choice) {
+            case 1:
+                cout << "Enter Source Airport (e.g., IAD): ";
+                cin >> src;
+                cout << "Enter Destination Airport (e.g., MIA): ";
+                cin >> dest;
+                airportGraph.dijkstra_shortest_path(Vertex<string>(src), Vertex<string>(dest));
+                break;
+            case 2:
+                cout << "Enter Source Airport: ";
+                cin >> src;
+                cout << "Enter State Abbreviation (e.g., FL): ";
+                cin >> state;
+                airportGraph.short_paths_state(Vertex<string>(src), state);
+                break;
+            case 3:
+                cout << "Enter Source (e.g., ATL): ";
+                cin >> src;
+                cout << "Enter Destination (e.g., TPA): ";
+                cin >> dest;
+                cout << "Enter Max Stops (e.g., 2): ";
+                cin >> stops;
+                airportGraph.short_path_stops(Vertex<string>(src), Vertex<string>(dest), stops);
+                break;
+            case 4:
+                airportGraph.disp_connections_sort();
+                break;
+            case 5:
+                airportGraph.cost_graph();
+                airportGraph.prim_mst();
+                break;
+            case 6:
+                airportGraph.kruskal_mst();
+                break;
+            default:
+                cout<<"Invalid choice!\n";
+        }
+    }
+    return 0; 
+}
+
+
+
+/*
+//Test main function
 int main() {
     cout << "--- Graph-Based Airport Connectivity and Flight Route Optimization System ---" << endl;
     
@@ -63,4 +130,4 @@ int main() {
     cout << endl;
 
     return 0;
-}
+}*/

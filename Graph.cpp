@@ -495,83 +495,57 @@ vertices.
 Parameter: nothing
 Return: nothing
 */
-
 template <typename T>
 void Graph<T>::prim_mst() {
-
     if(cost_graph_data == nullptr) {
         cost_graph();
     }
-    Graph<T> g = *cost_graph_data;  // get undirected graph
+    const int n = cost_graph_data->vertices.size();
+    if(n == 0) return;
 
-    int n = g.vertices.size();
-    if(n == 0) {
-        cout << "MST cannot be formed." << endl;
-        return;
-    }
-
-    vector<bool> inMST(n, false);
-    MinHeap<Edge> heap;
-
+    vector<int> min_cost(n, INT_MAX);
+    vector<int> parent(n, -1);
+    vector<bool> in_mst(n, false);
     int total_cost = 0;
-    int edges_used = 0;
+    int visited_count = 0;
 
-    // Start from vertex 0
-    inMST[0] = true;
+    for (int i = 0; i < n; i++) {
+        if (!in_mst[i]) {
+            MinHeap<Edge> heap;
+            min_cost[i] = 0;
+            heap.insert(Edge(i, i, 0, 0));
 
-    // Push all edges from vertex 0
-    for(int i = 0; i < g.edges[0].size(); i++) {
-        Edge e = g.edges[0][i];
-        heap.insert(e);
-    }
+            while (!heap.isEmpty()) {
+                Edge current = heap.delete_min();
+                int u = current.dest;
+                if (in_mst[u]) continue;
+                in_mst[u] = true;
+                visited_count++;
+                total_cost += current.weight;
 
-    cout << "Prim MST:" << endl;
+                for (int j = 0; j < cost_graph_data->edges[u].size(); j++) {
+                    Edge& edge = cost_graph_data->edges[u][j];
+                    int v = edge.dest;
+                    int weight = edge.weight;
 
-    while(!heap.isEmpty() && edges_used < n - 1) {
-
-        Edge e = heap.delete_min();
-
-        int u = e.src;
-        int v = e.dest;
-
-        // Skip if both already in MST
-        if(inMST[u] && inMST[v]) {
-            continue;
-        }
-
-        int new_vertex;
-        if(inMST[u]) {
-            new_vertex = v;
-        } else {
-            new_vertex = u;
-        }
-
-        cout << g.vertices[u].getData()
-             << " - "
-             << g.vertices[v].getData()
-             << ": "
-             << e.weight << endl;
-
-        total_cost += e.weight;
-        edges_used++;
-
-        inMST[new_vertex] = true;
-
-        // Add edges from new vertex
-        for(int i = 0; i < g.edges[new_vertex].size(); i++) {
-            Edge next = g.edges[new_vertex][i];
-            if(!inMST[next.dest]) {
-                heap.insert(next);
+                    if (!in_mst[v] && weight < min_cost[v]) {
+                        min_cost[v] = weight;
+                        parent[v] = u;
+                        heap.insert(Edge(u, v, weight, 0));
+                    }
+                }
             }
         }
     }
-
-    if(edges_used != n - 1) {
-        cout << "MST cannot be formed." << endl;
-        return;
+    cout << "Prim MST:" << endl;
+    for (int v = 0; v < n; v++) {
+        if (parent[v] != -1 && parent[v] != v) {
+            cout << cost_graph_data->vertices[parent[v]].getData()
+                 <<" - "<< cost_graph_data->vertices[v].getData()
+                 <<": "<< min_cost[v] << endl;
+        }
     }
-
-    cout << "Total cost: " << total_cost << endl;
+    cout <<"Total cost: "<< total_cost<<endl;
 }
 /*
 Description:Generate a Minimal Spanning Tree using Kruskal’s algorithm on G_u that you created in the
