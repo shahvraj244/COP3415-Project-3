@@ -27,7 +27,6 @@ int main() {
 
     //Task 2: Dijkstra Shortest Path
     cout << "--- Task 2: Dijkstra Shortest Path ---" << endl;
-    cout << "Shortest route from IAD to MIA: ";
     airportGraph.dijkstra_shortest_path(vIAD, vMIA);
 
     cout << "Shortest route from PIT to ACT: ";
@@ -42,10 +41,8 @@ int main() {
 
     //Task 4: Shortest Path with Stops
     cout << "--- Task 4: Shortest Path with Stops ---" << endl;
-    cout << "Shortest route from IAD to MIA with 3 stops: ";
     airportGraph.short_path_stops(vIAD, vMIA, 3);
 
-    cout << "Shortest route from PIT to ACT with 2 stops: ";
     airportGraph.short_path_stops(vPIT, vACT, 2);
     cout << endl;
 
