@@ -38,16 +38,16 @@ int main() {
                 airportGraph.dijkstra_shortest_path(Vertex<string>(src), Vertex<string>(dest));
                 break;
             case 2:
-                cout << "Enter Source Airport: ";
+                cout << "Enter Source Airport (e.g., IAD): ";
                 cin >> src;
                 cout << "Enter State Abbreviation (e.g., FL): ";
                 cin >> state;
-                airportGraph.short_paths_state(Vertex<string>(src), state);
+                airportGraph.short_path_state(Vertex<string>(src), state);
                 break;
             case 3:
-                cout << "Enter Source (e.g., ATL): ";
+                cout << "Enter Source Airport (e.g., ATL): ";
                 cin >> src;
-                cout << "Enter Destination (e.g., TPA): ";
+                cout << "Enter Destination Airport (e.g., TPA): ";
                 cin >> dest;
                 cout << "Enter Max Stops (e.g., 2): ";
                 cin >> stops;

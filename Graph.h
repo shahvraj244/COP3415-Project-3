@@ -17,7 +17,7 @@ class Graph {
         //Dijkstra Shortest Path returns weight
         int dijkstra_shortest_path(const Vertex<T>& src, const Vertex<T>& dest);
         //shortest path to airports in some state that hops to diff airports 
-        void short_paths_state(const Vertex<T>& src, const string& state);
+        void short_path_state(const Vertex<T>& src, const string& state);
         //short path with stops 
         void short_path_stops(const Vertex<T>& src, const Vertex<T>& dest, int stops);
         //Disp connections 
@@ -29,7 +29,8 @@ class Graph {
         //kruskal's minimum span tree
         void kruskal_mst(); 
         //Breadth first search
-        void BFS(Vertex<T>& ver); 
+        void BFS(Vertex<T>& ver, bool print = true);
+        //void BFS(Vertex<T>& ver); 
         //Depth first search 
         void DFS(Vertex<T>& ver); 
         //read from csv file 
@@ -38,7 +39,8 @@ class Graph {
         vector<Vertex<T>> vertices;
         vector<vector<Edge>> edges;
         void clean_visited();
-        void DFS_helper(Vertex<T>& ver);
+        //void DFS_helper(Vertex<T>& ver);
+        void DFS_helper(Vertex<T>& ver, bool print = true);
         int get_vertex_index(const Vertex<T>& ver);
         vector<string> vertex_cities;//gets the cities w/State (Tampa,FL)
         //Undirected Graph G_u 
