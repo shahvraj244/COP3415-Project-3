@@ -35,6 +35,7 @@ int Graph<T>::get_vertex_index(const Vertex<T>& ver) {
     }
     return -1; 
 }
+
 /*
 Description: Add a weighed edge between two vertices
 Parameter: ver1- source vertex, ver2 - destination vertex, weight - edge weight
@@ -54,6 +55,7 @@ void Graph<T>::add_edge(const Vertex<T>& ver1, const Vertex<T>& ver2, int weight
         edges[i2].push_back(v2); 
     }
 }
+
 /*
 Description: Perform Depth First Search starting from a given vertex
 Parameter: ver - starting vertex for DFS
@@ -65,9 +67,10 @@ void Graph<T>::DFS(Vertex<T>& ver) {
     DFS_helper(ver);
     clean_visited();
 }
+
 /*
 Description: Perform Breadth first search starting from a given vertex 
-Parameter: ver - starting vertex for BFS
+Parameter: ver - starting vertex for BFS, print - T/F if vertex visited 
 Return: void - nothing 
 */
 template <typename T> 
@@ -97,9 +100,10 @@ void Graph<T>::BFS(Vertex<T>& ver, bool print) {
     }
     clean_visited();
 }
+
 /*
 Description: Helper function for DFS that performs the recursive calls to visit adjacent vertices
-Parameter: ver - the vertex to start DFS from 
+Parameter: ver - the vertex to start DFS from, print - T/F if vertex reached 
 Return: nothing 
 */
 template <typename T> 
@@ -177,11 +181,11 @@ Graph<T>::Graph(const string& filename):cost_graph_data(nullptr) {
         // Insert vertices and track cities
         if(get_vertex_index(v1) == -1) {
             insert_vertex(v1);
-            vertex_cities.push_back(fields[2]); // "Atlanta, GA"
+            vertex_cities.push_back(fields[2]); //Atlanta 
         }
         if(get_vertex_index(v2) == -1) {
             insert_vertex(v2);
-            vertex_cities.push_back(fields[3]); // "Tampa, FL"
+            vertex_cities.push_back(fields[3]); //Tampa
         }
         int i1 = get_vertex_index(v1);
         int i2 = get_vertex_index(v2);
@@ -276,7 +280,7 @@ Description: Find all shortest paths between the given origin airport and all th
 destination state. DFS is first used to identify which airports in the target state are reachable 
 from the source. Dijkstra then computes the shortest path and cost to each of those airports.
 The algorithm outputs all paths and their lengths, or an appropriate message if no paths exist.
-Parameter: src - source vertex, state - destination state abbreviation (e.g. "FL")
+Parameter: src - source vertex, state - destination state abbreviation eg FL
 Return: nothing
 */
 template<typename T>
